@@ -1,26 +1,23 @@
-import { useEffect, useState } from "react"
-import { mintSolContract } from "../mint"
-import NFTCard from "../NFTCard"
-
-
-
+import { useEffect, useState } from "react";
+import useNFTs from "../../hooks/useNFTs";
+import { mintSolContract } from "../mint";
+import NFTCard from "../NFTCard";
 
 export default function HomeComponent() {
-  const [mintedCount, setMintedCount] = useState(0)
+  const { mintedCount, getMintedCount } = useNFTs();
+  console.log({ mintedCount });
 
-  useEffect(()=>{
-    getMintedCount()
-  }, [])
-
-  const getMintedCount = async () =>{
-    const count = await mintSolContract!.count()
-    console.log(mintSolContract?.signer)
-    setMintedCount(parseInt(count))
-  }
+  const refresh = async () => {
+    await getMintedCount();
+  };
 
   return (
-    <div style={{display: 'flex'}}>
-      {Array(mintedCount +1).fill(0).map((_, idx) => (<NFTCard key={idx} tokenId={idx +1} />))}
+    <div style={{ display: "flex" }}>
+      {Array(mintedCount + 1)
+        .fill(0)
+        .map((_, idx) => (
+          <NFTCard key={idx} onMint={refresh} tokenId={idx + 1} />
+        ))}
     </div>
-  )
+  );
 }
